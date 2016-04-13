@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Preamble</h3>
+<p>
+    If you find yourself visiting this page then i can only assume that you've
+    received only part of my message. Unfortunately that means that one of 2
+    things could have happened.
+    <ul>
+        <li>1 - The message got truncated serverside</li>
+        <li>2 - The submit function triggered an event which auto truncated my message</li>
+    </ul>
+    In either event this was a cool little challenge and I hope that it was well
+    received by you, and your company.
+</p>
+<h3>The rest of my message that got trunccated</h3>
+<ul>
+    <li>I also know jquery and can therefore inject text into the textarea, thereby avoiding the onevent handler that stops input (except that it didnt work in this case)</li>
+    <li>I enjoy a challenge and am always looking for creative solutions to problems</li>
+    <li>my current project involves creating a restfull api for <a href="http://institutional.herokuapp.com/">ratemyprof.com</a> (work in progress)</li>
+    <li>I plan to merge this with another project that has already created a <a href="https://github.com/rosshamish/classtime">restfull api</a> for beartracks and formated it into a <a href="http://heywinston.com">schedule builder</a></li>
+    <li>I'm very interested in learning and look forwards to new opportunities to do such at every instance</li>
+    <li>my favorite editor is Atom, and my current development operating system is Ubuntu 15.10</li>
+    <li>I also own a windows gaming machine</li>
+    <li>I consider myself pretty well rounded in both software / coding experience as well as personal experience</li>
+</ul>
+
+{% endblock %}

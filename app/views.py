@@ -13,3 +13,7 @@ def robots():
     res = app.make_response('User-agent: *\nAllow: /')
     res.mimetype = 'text/plain'
     return res
+
+@app.route("/otherwise")
+def otherwise():
+    return render_template('otherwise.html')
