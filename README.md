@@ -1,4 +1,4 @@
-# institute
+# institutional
 RESTFUL interface for ratemyprof.com
 
 ## Contributions
