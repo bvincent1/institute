@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from app import app
+from app import api
 from flask import render_template
 
 @app.route('/')

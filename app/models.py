@@ -21,8 +21,20 @@ class Professor(db.Model):
         if "first" in kwargs:
             self.first = kwargs["first"]
         if "ease" in kwargs:
-            self.last = kwargs["ease"]
+            self.ease = kwargs["ease"]
         if "helpfull" in kwargs:
-            self.last = kwargs["helpfull"]
+            self.helpfull = kwargs["helpfull"]
         if "rating" in kwargs:
-            self.last = kwargs["rating"]
+            self.rating = kwargs["rating"]
+
+    def toDict(self):
+        d = {
+            "id": self.id,
+            "last": self.last,
+            "first": self.first,
+            "rating": self.rating,
+            "ease": self.ease,
+            "helpfull": self.helpfull,
+            "clarity": self.clarity
+        }
+        return d
