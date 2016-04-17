@@ -6,8 +6,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 class Professor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name_last = db.Column(db.String(80), default="")
-    name_First = db.Column(db.String(80), default="")
+    last = db.Column(db.String(80), default="")
+    first = db.Column(db.String(80), default="")
     clarity = db.Column(db.Float, default=0.0)
     ease = db.Column(db.Float, default=0.0)
     helpfull = db.Column(db.Float, default=0.0)
@@ -16,13 +16,13 @@ class Professor(db.Model):
     def __init__(self, id, **kwargs):
         self.id = id
 
-        if "name_last" in kwargs:
-            self.name_last = kwags["name_last"]
-        if "name_first" in kwargs:
-            self.name_first = kwags["name_first"]
+        if "last" in kwargs:
+            self.last = kwargs["last"]
+        if "first" in kwargs:
+            self.first = kwargs["first"]
         if "ease" in kwargs:
-            self.name_last = kwags["ease"]
+            self.last = kwargs["ease"]
         if "helpfull" in kwargs:
-            self.name_last = kwags["helpfull"]
+            self.last = kwargs["helpfull"]
         if "rating" in kwargs:
-            self.name_last = kwags["rating"]
+            self.last = kwargs["rating"]
