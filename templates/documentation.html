@@ -35,7 +35,9 @@
             {% endfor %}
         </ul>
         <h3>Description</h3>
-        <p class="docstring">{{doc.docstring}}</p>
+        {% if doc.docstring %}
+          <p class="docstring">{{doc.docstring|markdown}}</p>
+        {% endif %}
     </div>
     {% endfor %}
     <script type="text/javascript">
