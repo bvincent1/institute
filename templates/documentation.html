@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    <h1>
+        {% if title is defined -%}
+            {{title}}
+        {% else -%}
+            Documentation
+        {% endif -%}
+    </h1>
+
+    {% for doc in autodoc %}
+    <div class="mapping">
+        <a id="rule-{{doc.rule|urlencode}}" class="rule"><h2>{{doc.rule|escape}}</h2></a>
+        <h3>Methods</h3>
+        <ul class="methods">
+            {% for method in doc.methods -%}
+                {% if method == 'GET' and doc.args == ['None'] %}
+                    <a href="{{doc.rule}}" class="getmethod">
+                        <li class="method">{{method}}</li>
+                    </a>
+                {% else %}
+                    <li class="method">{{method}}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <h3>Arguments</h3>
+        <ul class="arguments">
+            {% for arg in doc.args %}
+            <li>
+                <span class="argument">{{arg}}</span>
+                <span class="default">{{doc.defaults[arg]}}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <h3>Description</h3>
+        <p class="docstring">{{doc.docstring}}</p>
+    </div>
+    {% endfor %}
+    <script type="text/javascript">
+    /*
+      $(".docstring").each(function(index) {
+        $(this).text(markdown.toHTML($(this).text()));
+      });
+    */
+    </script>
+</body>
+{% endblock %}
