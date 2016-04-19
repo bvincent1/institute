@@ -16,6 +16,7 @@ class Professor(db.Model):
     helpfull = db.Column(db.Float, default=0.0)
     rating = db.Column(db.Float, default=0.0)
     updated = db.Column(db.String, default=datetime.utcnow().isoformat())
+    total = db.Column(db.Integer, default=0)
 
     def __init__(self, id, **kwargs):
         self.id = id
@@ -30,6 +31,8 @@ class Professor(db.Model):
             self.helpfull = kwargs["helpfull"]
         if "rating" in kwargs:
             self.rating = kwargs["rating"]
+        if "total" in kwargs:
+            self.total = kwargs["total"]
 
     def toDict(self):
         """ ## retuns dictionary representation of prof """

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import requests
+import json
 
 from datetime import datetime
 from app import db
@@ -72,39 +73,52 @@ def updateProfs():
     u = addProfArgs([TAGS["first"], TAGS["last"], TAGS["id"]])
     r = requests.get(u)
 
-    # get our data fromt he site as well as the db
+    # get our data from the site as well as the db
     resp = r.json()
-    profs = Professor.query.all()
-
 
     # do nothing if we still have the same lengths, means we'rer probs still up to date otherwise
     # the names and ids wont ever change so no need to go updating our db, just add in the new values
-    if profs and resp["response"]["numFound"] != len(profs):
+    if int(resp["response"]["numFound"]) != int(Professor.query.count()):
         # boss 1-liner, cause i can
         """
         [ db.session.add(Professor(e[TAGS["id"]], last=e[TAGS["last"]], first=e[TAGS["first"]])) for e in r.json()["response"]["docs"] if e[TAGS["id"]] not in [i.id for i in profs] ]
         """
+        profs = Professor.query.all()
+        id_list = [i.id for i in profs]
 
-        for e in r.json()["response"]["docs"]:
-            if e[TAGS["id"]] not in [i.id for i in profs]:
-                print e
+        for e in resp["response"]["docs"]:
+            if e[TAGS["id"]] not in id_list:
+                print "new " + json.dumps(e)
                 p = Professor(e[TAGS["id"]], last=e[TAGS["last"]], first=e[TAGS["first"]])
                 db.session.add(p)
-
     else:
-        for e in r.json()["response"]["docs"]:
-            print e
-            p = Professor(e[TAGS["id"]], last=e[TAGS["last"]], first=e[TAGS["first"]])
-            db.session.add(p)
+        print "no new entries found"
 
     db.session.commit()
+
     # get the actul prof data from the mtv site
     u = addProfArgs([TAGS["id"], TAGS["ease"], TAGS["helpfull"], TAGS["total"], TAGS["clarity"] ])
     r = requests.get(u)
     resp = r.json()
 
+    for e in resp["response"]["docs"]:
+        print "data " + json.dumps(e)
+        p = Professor.query.filter_by(id=e[TAGS["id"]]).first()
+        if TAGS["ease"] in e.keys():
+            p.ease = float(e[TAGS["ease"]])
+        if TAGS["helpfull"] in e.keys():
+            p.helpfull = float(e[TAGS["helpfull"]])
+        if TAGS["total"] in e.keys():
+            p.total = int(e[TAGS["total"]])
+        if TAGS["clarity"] in e.keys():
+            p.clarity = float(e[TAGS["clarity"]])
+
+    db.session.commit()
+
+
 def main():
     updateProfs()
+    print addProfArgs([TAGS["id"], TAGS["ease"], TAGS["helpfull"], TAGS["total"], TAGS["clarity"] ])
 
 if __name__ == '__main__':
     main()
