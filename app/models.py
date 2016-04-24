@@ -4,6 +4,7 @@
 from datetime import datetime
 from app import db
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy_utils import ScalarListType
 
 
 class Professor(db.Model):
@@ -15,8 +16,10 @@ class Professor(db.Model):
     ease = db.Column(db.Float, default=0.0)
     helpfull = db.Column(db.Float, default=0.0)
     rating = db.Column(db.Float, default=0.0)
-    updated = db.Column(db.String, default=datetime.utcnow().isoformat())
     total = db.Column(db.Integer, default=0)
+    tags = db.Column(ScalarListType(), default = [])
+    grade = db.Column(db.String(2), default="")
+    updated = db.Column(db.String(30), default=datetime.utcnow().isoformat())
 
     def __init__(self, id, **kwargs):
         self.id = id
@@ -43,12 +46,8 @@ class Professor(db.Model):
             "rating": self.rating,
             "ease": self.ease,
             "helpfull": self.helpfull,
-            "clarity": self.clarity
+            "clarity": self.clarity,
+            "grade": self.grade,
+            "tags": self.tags
         }
         return d
-
-class Meta(db.Model):
-    """ ## stores database meta data"""
-    __tablename__ = "meta"
-    id = db.Column(db.Integer, primary_key=True, default=0)
-    age = db.Column(db.String, default=datetime.utcnow().isoformat())

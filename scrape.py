@@ -3,6 +3,7 @@
 import requests
 import json
 
+from dateutil import parser
 from datetime import datetime
 from app import db
 from app.models import *
@@ -45,7 +46,6 @@ def generateHeader():
         "Host": "search.mtvnservices.com",
         "Connection": "keep-alive",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Upgrade-Insecure-Requests": "1",
         "User-Agent": user,
         "Accept-Encoding": "gzip, deflate, sdch",
         "Accept-Language": "en-GB,en;q=0.8,en-US;q=0.6,am;q=0.4,hu;q=0.2,fr;q=0.2"
@@ -75,6 +75,7 @@ def updateProfs():
 
     # get our data from the site as well as the db
     resp = r.json()
+    new_entries = []
 
     # do nothing if we still have the same lengths, means we'rer probs still up to date otherwise
     # the names and ids wont ever change so no need to go updating our db, just add in the new values
@@ -89,6 +90,7 @@ def updateProfs():
         for e in resp["response"]["docs"]:
             if e[TAGS["id"]] not in id_list:
                 print "new " + json.dumps(e)
+                new_entries.append(e[TAGS["id"]])
                 p = Professor(e[TAGS["id"]], last=e[TAGS["last"]], first=e[TAGS["first"]])
                 db.session.add(p)
     else:
@@ -102,18 +104,25 @@ def updateProfs():
     resp = r.json()
 
     for e in resp["response"]["docs"]:
-        print "data " + json.dumps(e)
         p = Professor.query.filter_by(id=e[TAGS["id"]]).first()
-        if TAGS["ease"] in e.keys():
-            p.ease = float(e[TAGS["ease"]])
-        if TAGS["helpfull"] in e.keys():
-            p.helpfull = float(e[TAGS["helpfull"]])
-        if TAGS["total"] in e.keys():
-            p.total = int(e[TAGS["total"]])
-        if TAGS["clarity"] in e.keys():
-            p.clarity = float(e[TAGS["clarity"]])
+        diff = datetime.utcnow() - parser.parse(p.updated)
+        # ensures that we only update the data every ~2 days
+        if diff.days > 2 or p.id in new_entries:
+            if TAGS["total"] in e.keys():
+                p.total = int(e[TAGS["total"]])
+            if TAGS["ease"] in e.keys():
+                p.ease = float(e[TAGS["ease"]])
+            if TAGS["helpfull"] in e.keys():
+                p.helpfull = float(e[TAGS["helpfull"]])
+            if TAGS["clarity"] in e.keys():
+                p.clarity = float(e[TAGS["clarity"]])
 
-    db.session.commit()
+            p.rating = (p.clarity + p.helpfull + p.ease) / 3
+            p.updated = str(datetime.utcnow().isoformat())
+
+            print "updated " + json.dumps(p.toDict())
+            db.session.commit()
+
 
 
 def main():
