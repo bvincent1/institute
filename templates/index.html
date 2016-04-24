@@ -1,18 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class=".col-md-6 .col-md-offset-3">
+<div class="jumbotron">
+  <div class="container">
     <h1>Institutional</h1>
-    <div class="">
-      <p>
-        Welcome to Institutional, a restfull interface for
-        <a href="http://www.ratemyprofessors.com/">RateMyProfessors.com</a>.
-        This is the main page.
-      </p>
-      <p>
-        Please see the documentation below.
-      </p>
-      <h2><a href="/documentation">Documentation</a></h2>
+    <p>Welcome to Institutional, a restfull interface for
+    <a href="http://www.ratemyprofessors.com/">RateMyProfessors.com</a>.
+    This is the main page. It's bassically a liveblog of the site as I slowly add
+    to it over its developement. Eventually it'll be fully functional and allow
+    for services to poll it for inforamtion concerning ratemyprofs, specifically
+    for ualberta. This could of course be expanded, but for now it will be limited
+    so as to keep the scope manageble.</p>
+  </div>
+</div>
+<div id="gitfeed" class="feed">
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>Latest Changes</h3>
+      <ul>
+        {% for msg in git %}
+        <li>{{ msg.message }}</li>
+        {% endfor %}
+
+      </ul>
     </div>
+    <div class="col-md-4">
+      <h3><a href="/documentation">API Documentation</a></h3>
+      <p>
+        Please see the documentation for information as to how it works.
+        This documentation is auto genereated by <a href="https://github.com/acoomans/flask-autodoc">flask-autodoc</a>,
+        and therefore is as up to date as possible, since im not acutally
+        writting it.
+      </p>
+   </div>
+    <div class="col-md-4">
+    </div>
+  </div>
 </div>
 {% endblock %}
