@@ -14,7 +14,12 @@ def home():
     for event in raw_feed:
         if event["type"] == "PushEvent" and event["repo"]["name"] == "bvincent1/institutional":
             for commit in event["payload"]["commits"]:
-                git_feed.append({ "message": commit["message"] })
+                index = commit["url"].rfind("commits/")+len("commits/")
+                url = "https://github.com/bvincent1/institutional/commit/"+commit["url"][index:]
+                git_feed.append({
+                                    "message": commit["message"],
+                                    "url": url
+                                })
 
 
     return render_template('index.html', git=git_feed[:5])

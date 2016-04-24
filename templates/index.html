@@ -21,7 +21,7 @@
       <h3>Latest Changes</h3>
       <ul>
         {% for msg in git %}
-        <li>{{ msg.message }}</li>
+          <li><a href="{{ msg.url }}">{{ msg.message }}</a></li>
         {% endfor %}
 
       </ul>
