@@ -3,6 +3,7 @@
 import requests
 import json
 
+from bs4 import BeautifulSoup
 from dateutil import parser
 from datetime import datetime
 from app import db
@@ -63,9 +64,9 @@ def makeRequest(tags):
 
 
 def updateProfs():
-    """ ## Update our db with any new data if we need to
-    - We do this by checking the numFound variable in the response since that'll at least tell us if theres been a new prof added, which guarenties a db update on our end
-    - Also we get all our db entries at once to try and save time (could create db meta table for keeping track of length and such, keep our db calls small / fast)
+    """ Update our db with any new data if we need to
+        - We do this by checking the numFound variable in the response since that'll at least tell us if theres been a new prof added, which guarenties a db update on our end
+        - Also we get all our db entries at once to try and save time
     """
 
     #if datetime.utcnow.isoformat()
@@ -122,6 +123,33 @@ def updateProfs():
 
             print "updated " + json.dumps(p.toDict())
             db.session.commit()
+
+def updateProf(id):
+    """ update prof w/ id """
+    r = requests.get("http://www.ratemyprofessors.com/ShowRatings.jsp?tid="+str(id))
+    p = Professor.query.filter_by(id=id).first()
+
+    if p:
+        soup = BeautifulSoup(r.text, "html.parser")
+        # scrape the data from the page
+        ratings_title = ["helpfull", "clarity", "ease"]
+        ratings_number = [float(i.text) for i in soup.find_all("div") if i.get("class") == ["rating"]][:3]
+        ratings = dict(zip(ratings_title, ratings_number))
+        ratings["tags"] = [i.text for i in soup.find_all("span") if i.get("class") == ["tag-box-choosetags"]]
+        ratings["grade"] = [i.text for i in soup.find_all("div") if i.get("class") == ["grade"]][1]
+
+        # update our data
+        p.ease = ratings["ease"]
+        p.helpfull = ratings["helpfull"]
+        p.clarity = ratings["clarity"]
+        p.rating = (p.clarity + p.helpfull + p.ease) / 3
+        p.tags = ratings["tags"]
+        p.grade = ratings["grade"]
+        p.updated = str(datetime.utcnow().isoformat())
+
+        db.session.commit()
+
+
 
 
 
